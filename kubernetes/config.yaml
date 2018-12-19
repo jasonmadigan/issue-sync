@@ -8,5 +8,6 @@ data:
   jira-uri:
   repo-name:
   jira-project:
+  jira-issue-type:
   timeout:
   period:

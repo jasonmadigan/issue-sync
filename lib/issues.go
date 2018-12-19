@@ -23,6 +23,7 @@ func CompareIssues(config cfg.Config, ghClient clients.GitHubClient, jiraClient 
 	log.Debug("Collecting issues")
 
 	ghIssues, err := ghClient.ListIssues()
+
 	if err != nil {
 		return err
 	}
@@ -174,7 +175,7 @@ func CreateIssue(config cfg.Config, issue github.Issue, ghClient clients.GitHubC
 
 	fields := jira.IssueFields{
 		Type: jira.IssueType{
-			Name: "Task", // TODO: Determine issue type
+			Name: config.GetIssueType(),
 		},
 		Project:     config.GetProject(),
 		Summary:     issue.GetTitle(),

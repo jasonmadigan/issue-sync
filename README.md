@@ -49,6 +49,7 @@ jira-private-key-path|string| |false|null
 repo-name|string|"coreos/issue-sync"|true|null
 jira-uri|string|"https://jira.example.com|true|null
 jira-project|string|"SYNC"|true|null
+jira-issue-type|string|"Bug"|false|"Task"
 since|string|"2017-07-01T13:45:00-0800"|false|"1970-01-01T00:00:00+0000"
 timeout|duration|500ms|false|1m
 
@@ -78,6 +79,9 @@ lives at a non-root URL, the path must be included. For example,
 
 `jira-project` is the key (not the name) of the project in JIRA to
 which the issues will be synchronized.
+
+`jira-issue-type` is issueType that will be used for synchronized JIRA 
+issues.
 
 `since` is the cutoff date issue-sync will use when searching for issues
 to synchronize. If an issue was last updated before this time, it will

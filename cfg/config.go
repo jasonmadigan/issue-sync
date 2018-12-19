@@ -26,6 +26,9 @@ const dateFormat = "2006-01-02T15:04:05-0700"
 // defaultLogLevel is the level logrus should default to if the configured option can't be parsed
 const defaultLogLevel = logrus.InfoLevel
 
+// defaultJiraIssueType is the issueType that will be used for synchronized issues created in JIRA
+const defaultJiraIssueType = "Task"
+
 // fieldKey is an enum-like type to represent the customfield ID keys
 type fieldKey int
 
@@ -70,6 +73,9 @@ type Config struct {
 	// since is the parsed value of the `since` configuration parameter, which is the earliest that
 	// a GitHub issue can have been updated to be retrieved.
 	since time.Time
+
+	// issueType is the JIRA issueType that will be applied when importing issues
+	issueType string
 }
 
 // NewConfig creates a new, immutable configuration object. This object
@@ -205,6 +211,11 @@ func (c Config) GetProjectKey() string {
 	return c.project.Key
 }
 
+// GetIssueType returns the JIRA issueType to use when importing issues.
+func (c Config) GetIssueType() string {
+	return c.issueType
+}
+
 // GetRepo returns the user/org name and the repo name of the configured GitHub repository.
 func (c Config) GetRepo() (string, string) {
 	fullName := c.cmdConfig.GetString("repo-name")
@@ -222,18 +233,20 @@ func (c Config) SetJIRAToken(token *oauth1.Token) {
 
 // configFile is a serializable representation of the current Viper configuration.
 type configFile struct {
-	LogLevel    string        `json:"log-level" mapstructure:"log-level"`
-	GithubToken string        `json:"github-token" mapstructure:"github-token"`
-	JIRAUser    string        `json:"jira-user" mapstructure:"jira-user"`
-	JIRAToken   string        `json:"jira-token" mapstructure:"jira-token"`
-	JIRASecret  string        `json:"jira-secret" mapstructure:"jira-secret"`
-	JIRAKey     string        `json:"jira-private-key-path" mapstructure:"jira-private-key-path"`
-	JIRACKey    string        `json:"jira-consumer-key" mapstructure:"jira-consumer-key"`
-	RepoName    string        `json:"repo-name" mapstructure:"repo-name"`
-	JIRAURI     string        `json:"jira-uri" mapstructure:"jira-uri"`
-	JIRAProject string        `json:"jira-project" mapstructure:"jira-project"`
-	Since       string        `json:"since" mapstructure:"since"`
-	Timeout     time.Duration `json:"timeout" mapstructure:"timeout"`
+	LogLevel      string        `json:"log-level" mapstructure:"log-level"`
+	GithubToken   string        `json:"github-token" mapstructure:"github-token"`
+	JIRAUser      string        `json:"jira-user" mapstructure:"jira-user"`
+	JIRAPass      string        `json:"jira-pass" mapstructure:"jira-pass"`
+	JIRAToken     string        `json:"jira-token" mapstructure:"jira-token"`
+	JIRASecret    string        `json:"jira-secret" mapstructure:"jira-secret"`
+	JIRAKey       string        `json:"jira-private-key-path" mapstructure:"jira-private-key-path"`
+	JIRACKey      string        `json:"jira-consumer-key" mapstructure:"jira-consumer-key"`
+	RepoName      string        `json:"repo-name" mapstructure:"repo-name"`
+	JIRAURI       string        `json:"jira-uri" mapstructure:"jira-uri"`
+	JIRAProject   string        `json:"jira-project" mapstructure:"jira-project"`
+	JIRAIssueType string        `json:"jira-issue-type" mapstructure:"jira-issue-type"`
+	Since         string        `json:"since" mapstructure:"since"`
+	Timeout       time.Duration `json:"timeout" mapstructure:"timeout"`
 }
 
 // SaveConfig updates the `since` parameter to now, then saves the configuration file.
@@ -409,6 +422,12 @@ func (c *Config) validateConfig() error {
 	project := c.cmdConfig.GetString("jira-project")
 	if project == "" {
 		return errors.New("JIRA project required")
+	}
+
+	issueType := c.cmdConfig.GetString("jira-issue-type")
+	if issueType == "" {
+		// Default if unset
+		c.cmdConfig.Set("jira-issue-type", defaultJiraIssueType)
 	}
 
 	sinceStr := c.cmdConfig.GetString("since")

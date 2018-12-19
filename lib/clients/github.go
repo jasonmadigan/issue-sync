@@ -55,6 +55,7 @@ func (g realGHClient) ListIssues() ([]github.Issue, error) {
 				},
 			})
 		})
+
 		if err != nil {
 			return nil, err
 		}

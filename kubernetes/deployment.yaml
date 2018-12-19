@@ -80,6 +80,11 @@ spec:
               configMapKeyRef:
                 name: issue-sync
                 key: jira-project
+          - name: ISSUE_SYNC_JIRA_ISSUE_TYPE
+            valueFrom:
+              configMapKeyRef:
+                name: issue-sync
+                key: jira-issue-type
           - name: ISSUE_SYNC_TIMEOUT
             valueFrom:
               configMapKeyRef:

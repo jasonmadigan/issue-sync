@@ -67,6 +67,7 @@ func init() {
 	RootCmd.PersistentFlags().StringP("repo-name", "r", "", "Set the repository path (should be form owner/repo)")
 	RootCmd.PersistentFlags().StringP("jira-uri", "U", "", "Set the base uri of the JIRA instance")
 	RootCmd.PersistentFlags().StringP("jira-project", "P", "", "Set the key of the JIRA project")
+	RootCmd.PersistentFlags().StringP("jira-issue-type", "i", "", "Set the issueType of imported JIRA issues")
 	RootCmd.PersistentFlags().StringP("since", "s", "1970-01-01T00:00:00+0000", "Set the day that the update should run forward from")
 	RootCmd.PersistentFlags().BoolP("dry-run", "d", false, "Print out actions to be taken, but do not execute them")
 	RootCmd.PersistentFlags().DurationP("timeout", "T", time.Minute, "Set the maximum timeout on all API calls")
